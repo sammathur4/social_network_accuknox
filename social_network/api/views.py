@@ -12,9 +12,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-
+from rest_framework.throttling import UserRateThrottle
 
 User = get_user_model()
+
+
+class FriendRequestRateThrottle(UserRateThrottle):
+    rate = '1000/minute'
+
 
 class SignupView(APIView):
     permission_classes = [AllowAny]
@@ -34,10 +39,6 @@ class CustomAuthToken(ObtainAuthToken):
         token = Token.objects.get(key=response.data['token'])
         return Response({'token': token.key})
 
-from rest_framework.throttling import UserRateThrottle
-
-class FriendRequestRateThrottle(UserRateThrottle):
-    rate = '1000/minute'
 
 class UserSearchView(generics.ListAPIView):
     serializer_class = UserSerializer
